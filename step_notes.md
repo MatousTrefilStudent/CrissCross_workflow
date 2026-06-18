@@ -22,6 +22,8 @@ Spustit basic_version_terminal.py
 
 ## Step 05
 
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
 ```bash
 python -m venv .venv
 ```
@@ -34,6 +36,8 @@ Aktivace:
 
 Instalace závislostí:
 ```bash
+pip freeze > requirements.txt
+
 pip install -r requirements.txt
 ```
 
