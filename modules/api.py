@@ -39,5 +39,11 @@ class GameAPI:
     def get_board(self):
         return self.game.get_board()
 
+    def save_game(self, path="savegame.json"):
+        return self.game.save_game(path)
+
+    def load_game(self, path="savegame.json"):
+        return self.game.load_game(path)
+
     def __str__(self) -> str:
         return str(self.game)

@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from modules.api import GameAPI
@@ -220,3 +222,24 @@ def test_draw():
     assert api.is_full()
     assert api.get_winner() is None
     assert api.is_game_over()
+
+
+def test_save_and_load_game_round_trip(tmp_path):
+    api = GameAPI(size=3)
+    api.move(0, 0)
+    api.move(0, 1)
+
+    save_path = tmp_path / "savegame.json"
+    assert api.save_game(save_path) is True
+
+    with save_path.open("r", encoding="utf-8") as handle:
+        data = json.load(handle)
+
+    assert data["board"][0][0] in {"X", "O", " "}
+    assert data["board"][0][1] in {"X", "O", " "}
+
+    restored = GameAPI(size=3)
+    assert restored.load_game(save_path) is True
+    assert restored.get_cell(0, 0) == api.get_cell(0, 0)
+    assert restored.get_cell(0, 1) == api.get_cell(0, 1)
+    assert restored.get_current_player() == api.get_current_player()

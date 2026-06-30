@@ -5,7 +5,7 @@ s Board / Player / Game.
 """
 
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import filedialog, messagebox, simpledialog
 
 try:
     from modules.api import GameAPI
@@ -30,27 +30,22 @@ class CrissCrossGUI:
     # --- Sestavení UI ----------------------------------------------------
 
     def _build_widgets(self) -> None:
-        board_frame = tk.Frame(self.root)
-        board_frame.pack(padx=10, pady=10)
+        self.board_frame = tk.Frame(self.root)
+        self.board_frame.pack(padx=10, pady=10)
 
-        for x in range(self.size):
-            for y in range(self.size):
-                btn = tk.Button(
-                    board_frame,
-                    text="",
-                    width=2,
-                    height=1,
-                    font=("Courier", 10, "bold"),
-                    command=lambda x=x, y=y: self._on_cell_click(x, y),
-                )
-                btn.grid(row=x, column=y)
-                self.buttons[x][y] = btn
+        self._render_board()
 
         controls = tk.Frame(self.root)
         controls.pack(pady=(0, 10))
 
         self.status_label = tk.Label(controls, text="", font=("Courier", 12))
         self.status_label.pack(side=tk.LEFT, padx=10)
+
+        save_btn = tk.Button(controls, text="Uložit", command=self._on_save)
+        save_btn.pack(side=tk.LEFT, padx=10)
+
+        load_btn = tk.Button(controls, text="Načíst", command=self._on_load)
+        load_btn.pack(side=tk.LEFT, padx=10)
 
         reset_btn = tk.Button(controls, text="Nová hra", command=self._on_reset)
         reset_btn.pack(side=tk.LEFT, padx=10)
@@ -68,7 +63,7 @@ class CrissCrossGUI:
             )
             return
 
-        self.buttons[x][y].config(text=result["player"], state="disabled")
+        self._refresh_board()
         self._update_status(result)
 
         if result["winner"]:
@@ -77,13 +72,91 @@ class CrissCrossGUI:
             messagebox.showinfo("Konec hry", "Remíza, deska je plná.")
 
     def _on_reset(self) -> None:
-        self.api.reset()
-        for row in self.buttons:
-            for btn in row:
-                btn.config(text="", state="normal")
+        size = self._prompt_board_size()
+        if size is None:
+            return
+
+        self.api.new_game(size)
+        self._render_board()
         self._update_status()
 
+    def _on_save(self) -> None:
+        path = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            initialfile="savegame.json",
+            filetypes=[("JSON soubory", "*.json"), ("Všechny soubory", "*.*")],
+        )
+        if not path:
+            return
+
+        if self.api.save_game(path):
+            messagebox.showinfo("Uloženo", f"Hra uložena do {path}")
+        else:
+            messagebox.showerror("Chyba", "Nepodařilo se uložit hru.")
+
+    def _on_load(self) -> None:
+        path = filedialog.askopenfilename(
+            defaultextension=".json",
+            initialfile="savegame.json",
+            filetypes=[("JSON soubory", "*.json"), ("Všechny soubory", "*.*")],
+        )
+        if not path:
+            return
+
+        if self.api.load_game(path):
+            self._render_board()
+            self._update_status()
+            messagebox.showinfo("Načteno", f"Hra načtena z {path}")
+        else:
+            messagebox.showerror("Chyba", "Nepodařilo se načíst hru.")
+
     # --- Pomocné metody ----------------------------------------------------
+
+    def _prompt_board_size(self) -> int | None:
+        current_size = self.api.get_size()
+        size = simpledialog.askinteger(
+            "Nová hra",
+            "Zadejte velikost hracího pole:",
+            initialvalue=current_size,
+            minvalue=3,
+            maxvalue=25,
+        )
+        if size is None:
+            return None
+        return size
+
+    def _render_board(self) -> None:
+        for widget in self.board_frame.winfo_children():
+            widget.destroy()
+
+        size = self.api.get_size()
+        self.buttons = [[None for _ in range(size)] for _ in range(size)]
+
+        for x in range(size):
+            for y in range(size):
+                btn = tk.Button(
+                    self.board_frame,
+                    text="",
+                    width=2,
+                    height=1,
+                    font=("Courier", 10, "bold"),
+                    command=lambda x=x, y=y: self._on_cell_click(x, y),
+                )
+                btn.grid(row=x, column=y)
+                self.buttons[x][y] = btn
+
+        self._refresh_board()
+
+    def _refresh_board(self) -> None:
+        size = self.api.get_size()
+        for x in range(size):
+            for y in range(size):
+                cell = self.api.get_cell(x, y)
+                btn = self.buttons[x][y]
+                if cell is None:
+                    btn.config(text="", state="normal")
+                else:
+                    btn.config(text=cell, state="disabled")
 
     def _update_status(self, result: dict = None) -> None:
         if result and result.get("winner"):
