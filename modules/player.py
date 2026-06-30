@@ -16,3 +16,4 @@ class Player:
             raise ValueError("board.make_move() did not return True (you can´t place your symbol there)")
         return result
 
+print("test commmit")
