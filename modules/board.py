@@ -1,7 +1,7 @@
 class Board:
     def __init__(self, size=25):
-        if size <= 0:
-            raise ValueError("size must be positive")
+        """if size <= 0:
+            raise ValueError("size must be positive")"""
         self.size = size
         self.board = [[None for _ in range(size)] for _ in range(size)]
 
