@@ -11,14 +11,6 @@ def test_player_initialization():
     assert player.name == "Alice"
     assert player.symbol == "X"
 
-"""
-def test_make_move_success():
-    player = Player("Alice", "X")
-    board = Board(5)
-
-    result = player.make_move(board, 0, 0)
-
-    assert result is True"""
 
 
 def test_make_move_invalid_board():
@@ -42,13 +34,3 @@ def test_make_move_invalid_y():
 
     with pytest.raises(TypeError):
         player.make_move(board, 0, "0")
-
-
-"""def test_make_move_occupied_cell():
-    player = Player("Alice", "X")
-    board = Board(5)
-
-    board.make_move(0, 0)
-
-    with pytest.raises(ValueError):
-        player.make_move(board, 0, 0)"""
