@@ -80,33 +80,33 @@ def test_make_move_out_of_bounds_should_be_rejected():
     result = board.make_move(10, 10, True)
     assert result is False
 
-"""
-def test_make_move_negative_coordinates_should_be_rejected():"""
-""" Negative indices wrap around in Python lists instead of being
-    rejected, so this silently succeeds on the wrong cell.""""""
+
+def test_make_move_negative_coordinates_should_be_rejected():
+    """Negative indices wrap around in Python lists instead of being
+    rejected, so this silently succeeds on the wrong cell."""
     board = Board(5)
     result = board.make_move(-1, -1, True)
     assert result is False
 
 
-def test_make_move_rejects_invalid_player_value():"""
-""" The class does not validate that `player` is a boolean, so
-    arbitrary values are accepted and break the X/O semantics.""""""
+def test_make_move_rejects_invalid_player_value():
+    """The class does not validate that `player` is a boolean, so
+    arbitrary values are accepted and break the X/O semantics."""
     board = Board(5)
     with pytest.raises(ValueError):
         board.make_move(0, 0, "not_a_boolean")
 
 
-def test_str_uses_dot_for_empty_cell_not_space():"""
-""" Asserts a different empty-cell symbol ('.') than what the
-    implementation actually outputs (' '), so it fails by design.""""""
+def test_str_uses_dot_for_empty_cell_not_space():
+    """Asserts a different empty-cell symbol ('.') than what the
+    implementation actually outputs (' '), so it fails by design."""
     board = Board(2)
     output = str(board)
     assert "." in output
 
 
-def test_board_size_must_be_positive():"""
-""" The constructor does not validate `size`, so a non-positive
-    size is silently accepted instead of raising an error.""""""
+def test_board_size_must_be_positive():
+    """The constructor does not validate `size`, so a non-positive
+    size is silently accepted instead of raising an error."""
     with pytest.raises(ValueError):
-        Board(0)"""
+        Board(0)
