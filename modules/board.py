@@ -5,6 +5,8 @@ class Board:
         self.size = size
         self.board = [[None for _ in range(size)] for _ in range(size)]
 
+    def __iter__(self):
+        return iter(self.board)
 
     def __str__(self):
         board_str = ""
@@ -16,27 +18,39 @@ class Board:
                     board_str += "X"
                 elif y == False:
                     board_str += "O"
-                
+                else:
+                    board_str += str(y)
                 board_str += "|"
             board_str += "\n"
         return board_str
-    
+
     def make_move(self, x, y, player):
         """Place a move for player at (x, y).
 
         x and y must be within bounds [0, size-1].
-        player must be a boolean: True for X, False for O.
+        player may be True/False or the symbols "X"/"O".
         Returns True if the move was placed, False otherwise.
         """
         if not (0 <= x < self.size and 0 <= y < self.size):
             return False
+
+        if isinstance(player, str):
+            symbol = player.upper()
+            if symbol == "X":
+                player = True
+            elif symbol == "O":
+                player = False
+            else:
+                return False
+
         if player not in (True, False):
             return False
+
         if self.board[x][y] is None:
             self.board[x][y] = player
             return True
         return False
-    
+
 
 if __name__ == "__main__":
     board = Board()
