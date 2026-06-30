@@ -72,15 +72,15 @@ def test_str_shows_o_for_false():
 def test_str_returns_string_type():
     board = Board(3)
     assert isinstance(str(board), str)
-"""
-def test_make_move_out_of_bounds_should_be_rejected():"""
-""" There is no bounds checking, so this raises IndexError instead
+
+def test_make_move_out_of_bounds_should_be_rejected():
+    """There is no bounds checking, so this raises IndexError instead
     of returning False as a well-behaved API should."""
-""" board = Board(5)
+    board = Board(5)
     result = board.make_move(10, 10, True)
     assert result is False
 
-
+"""
 def test_make_move_negative_coordinates_should_be_rejected():"""
 """ Negative indices wrap around in Python lists instead of being
     rejected, so this silently succeeds on the wrong cell.""""""
