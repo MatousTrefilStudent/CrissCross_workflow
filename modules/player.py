@@ -17,4 +17,4 @@ class Player:
         return result
 
     def test(self):
-        print("something")
+        print("something test2")
