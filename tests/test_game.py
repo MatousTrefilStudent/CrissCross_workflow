@@ -30,7 +30,6 @@ class TestGame:
 
         assert result is True
         assert game.board.board[0][0] in (True, False)
-    
     def test_make_move_invalid_occupied(self):
         """Test that move on occupied cell fails"""
         game = Game()
