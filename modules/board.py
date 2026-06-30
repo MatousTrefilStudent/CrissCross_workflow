@@ -36,3 +36,16 @@ class Board:
             self.board[x][y] = player
             return True
         return False
+    
+
+if __name__ == "__main__":
+    board = Board()
+    print(board)
+    board.make_move(0, 0, True)
+    print(board)
+    input()
+    while True:
+        import random
+        print(board.make_move(random.randint(0, 24), random.randint(0, 24), random.choice([True, False])))
+        print(board)
+        input()
