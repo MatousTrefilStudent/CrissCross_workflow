@@ -43,6 +43,56 @@ class Game:
     def play(self, x, y):
         return self.make_move(x, y)
 
+    def new_game(self, size=None):
+        if size is not None:
+            self.size = size
+        self.reset()
+
+    def move(self, x, y):
+        player_symbol = self.get_current_player()
+        success = self.make_move(x, y)
+
+        winner = self.get_winner() if success else None
+        is_full = self.is_board_full()
+
+        return {
+            "success": success,
+            "player": player_symbol if success else None,
+            "winner": winner,
+            "is_full": is_full,
+            "next_player": self.get_current_player(),
+            "game_over": winner is not None or is_full,
+        }
+
+    def get_current_player(self):
+        return self.current_player.symbol
+
+    def get_winner(self):
+        return self.check_winner()
+
+    def is_full(self):
+        return self.is_board_full()
+
+    def is_game_over(self):
+        return self.get_winner() is not None or self.is_full()
+
+    def get_size(self):
+        return self.size
+
+    def get_cell(self, x, y):
+        value = self.board.board[x][y]
+        if value is True:
+            return "X"
+        if value is False:
+            return "O"
+        return None
+
+    def get_board(self):
+        return [
+            ["X" if cell is True else "O" if cell is False else None for cell in row]
+            for row in self.board.board
+        ]
+
     def _has_winning_line(self, row, col, row_step, col_step):
         start_value = self.board.board[row][col]
         if start_value is None:
@@ -79,7 +129,13 @@ class Game:
         return all(cell is not None for row in self.board.board for cell in row)
 
     def reset(self):
+        if self.size <= 0:
+            raise ValueError("size must be positive")
+
         self.board = Board(self.size)
         self.player1 = Player("Player 1", "X")
         self.player2 = Player("Player 2", "O")
         self.current_player = random.choice([self.player1, self.player2])
+
+    def __str__(self):
+        return str(self.board)
