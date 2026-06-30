@@ -15,3 +15,6 @@ class Player:
         if result is not True:
             raise ValueError("board.make_move() did not return True (you can´t place your symbol there)")
         return result
+
+    def test(self):
+        print("something")
